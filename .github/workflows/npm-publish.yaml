@@ -23,7 +23,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-      - run: cd ./pkg
-      - run: npm publish --access public
+      - name: Run `publish` command
+        working-directory: ./pkg
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: $${{ secrets.NPM_ACCESS_TOKEN }}
