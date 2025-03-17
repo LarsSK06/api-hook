@@ -17,9 +17,11 @@ jobs:
           registry-url: "https://registry.npmjs.org"
 
       - name: Test dependencies
+        working-directory: ./pkg
         run: npm ci
 
       - name: Publish to registry
+        working-directory: ./pkg
         run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
