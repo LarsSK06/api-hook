@@ -1,15 +1,10 @@
+import { GlobalOptions } from "./types";
+
 import React, { createContext, ReactNode, useContext, useMemo, useState } from "react";
 
-type AccessToken = string | null;
-
-type GlobalOptions = {
-    baseURL: string;
-    getError?: (error: any) => string;
-};
-
 type APIHookContextState = {
-    accessToken: AccessToken;
-    setAccessToken: (value: AccessToken) => void;
+    accessToken: string | null;
+    setAccessToken: (value: string | null) => void;
     globalOptions: GlobalOptions;
     setGlobalOptions: (value: GlobalOptions) => void;
 };
@@ -17,8 +12,8 @@ type APIHookContextState = {
 const APIHookContext = createContext<APIHookContextState | undefined>(undefined);
 
 export const APIHookContextProvider = ({ children }: { children?: ReactNode }) => {
-    const [accessToken, setAccessToken] = useState<AccessToken>(null);
-    const [globalOptions, setGlobalOptions] = useState<GlobalOptions>({ baseURL: "/" });
+    const [accessToken, setAccessToken] = useState<string | null>(null);
+    const [globalOptions, setGlobalOptions] = useState<GlobalOptions>({});
 
     const state = useMemo<APIHookContextState>(() => ({
         accessToken,

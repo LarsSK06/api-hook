@@ -1,57 +1,15 @@
 import { useState } from "react";
 import { useAPIHookContext } from "./context";
+import { HTTPMethod, Options, RequestRoot, ResponseRoot } from "./types";
 
-import axios, { AxiosHeaders } from "axios";
-
-export enum HTTPMethod {
-    GET = "GET",
-    POST = "POST",
-    PUT = "PUT",
-    DELETE = "DELETE",
-    PATCH = "PATCH"
-}
-
-export type EndpointString =
-    undefined |
-    string |
-    number |
-    symbol |
-    null;
-
-export type Options<Response, Request> = {
-    endpoint?: EndpointString | EndpointString[];
-    searchParams?: { [key: string]: EndpointString };
-    method?: HTTPMethod;
-    headers?: AxiosHeaders;
-    body?: Request;
-    onSuccess?: (value: Response) => void;
-    onError?: (error: string) => void;
-};
-
-export type ResponseRoot =
-    undefined |
-    string |
-    number |
-    Blob |
-    null |
-    {} |
-    [];
-
-export type RequestRoot =
-    undefined |
-    FormData |
-    string |
-    number |
-    null |
-    {} |
-    [];
+import axios from "axios";
 
 export const useAPI = <
     Params,
     Response extends ResponseRoot,
     Request extends RequestRoot
 >(optionsFactory: Options<Response, Request> | ((params?: Params) => Options<Response, Request>)) => {
-    const { accessToken, globalOptions: { baseURL, getError } } = useAPIHookContext();
+    const { accessToken, globalOptions: { baseURL, getError, processor } } = useAPIHookContext();
 
     const [data, setData] = useState<Response | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
@@ -73,8 +31,8 @@ export const useAPI = <
 
         const finalEndpoint =
             endpoint instanceof Array
-                ? [baseURL, ...endpoint].join("/")
-                : [baseURL, endpoint].join("/");
+                ? [baseURL ?? ".", ...endpoint].join("/")
+                : [baseURL ?? ".", endpoint].join("/");
 
         const finalHeaders =
             accessToken
@@ -89,8 +47,12 @@ export const useAPI = <
                 method
             });
 
-            onSuccess?.(response.data);
-            setData(response.data);
+            const payload =
+                processor?.(response.data) ??
+                response.data;
+
+            onSuccess?.(payload);
+            setData(payload);
         }
         catch (error: any) {
             onError?.(
