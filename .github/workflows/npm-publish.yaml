@@ -28,4 +28,4 @@ jobs:
         working-directory: ./pkg
         run: npm publish --access public
         env:
-          NODE_AUTH_TOKEN: $${{ secrets.NPM_ACCESS_TOKEN }}
+          NPM_TOKEN: $${{ secrets.NPM_ACCESS_TOKEN }}
