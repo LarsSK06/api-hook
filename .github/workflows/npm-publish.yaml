@@ -20,6 +20,10 @@ jobs:
         working-directory: ./pkg
         run: npm ci
 
+      - name: Test build
+        working-directory: ./pkg
+        run: npm run build
+
       - name: Publish to registry
         working-directory: ./pkg
         run: npm publish --access public
