@@ -1,6 +1,6 @@
 {
     "name": "@larssk/api-hook",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "",
     "homepage": "https://github.com/LarsSK06/api-hook#readme",
     "bugs": {
@@ -13,13 +13,19 @@
     "license": "MIT",
     "author": "Lars Kvihaugen",
     "type": "commonjs",
-    "main": "index.ts",
-    "scripts": {},
+    "main": "./dist/index.js",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.ts",
+    "scripts": {
+        "build": "tsup ./index.ts --format esm,cjs --dts"
+    },
     "dependencies": {
         "axios": "^1.8.3",
         "react": "^19.0.0"
     },
     "devDependencies": {
-        "@types/react": "^19.0.10"
+        "@types/react": "^19.0.10",
+        "tsup": "^8.4.0",
+        "typescript": "^5.8.2"
     }
 }

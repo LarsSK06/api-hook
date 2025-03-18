@@ -5,9 +5,9 @@ import { HTTPMethod, Options, RequestRoot, ResponseRoot } from "./types";
 import axios from "axios";
 
 export const useAPI = <
-    Params,
-    Response extends ResponseRoot,
-    Request extends RequestRoot
+    Params = undefined,
+    Response extends ResponseRoot = undefined,
+    Request extends RequestRoot = undefined
 >(optionsFactory: Options<Response, Request> | ((params?: Params) => Options<Response, Request>)) => {
     const { accessToken, globalOptions: { baseURL, getError, processor } } = useAPIHookContext();
 
