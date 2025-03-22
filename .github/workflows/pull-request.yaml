@@ -47,6 +47,7 @@ jobs:
           node-version: 20
 
       - name: Clean install
+        working-directory: pkg
         run: npm ci
 
   test-build:
@@ -64,6 +65,7 @@ jobs:
           node-version: 20
 
       - name: Build
+        working-directory: pkg
         run: npm run build
 
   dry-publish:
