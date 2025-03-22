@@ -20,15 +20,15 @@ jobs:
         with:
           registry-url: https://registry.npmjs.org/
 
-      - name: Test dependencies
+      - name: Install dependencies
         working-directory: ./pkg
         run: npm ci
 
-      - name: Test build
+      - name: Build
         working-directory: ./pkg
         run: npm run build
           
-      - name: Publish to NPM registry
+      - name: Publish
         working-directory: ./pkg
         run: npm publish --access public
         env:

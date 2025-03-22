@@ -1,0 +1,77 @@
+name: Validate pull request
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  
+  validate-version-availability:
+    name: Validate version availability
+    runs-on: ubuntu-latest
+    steps:
+      
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Node.JS setup
+        uses: actions/setup-node@v4
+
+      - name: Install JQ
+        run: sudo apt-get install -y jq
+
+      - name: Validate version availability
+        working-directory: ./pkg
+        run: |
+          PACKAGE_NAME=$(jq -r .name .package.json)
+          PACKAGE_VERSION=$(jq -r .version package.json)
+
+          if npm view "$PACKAGE_NAME@$PACKAGE_VERSION" > /dev/null 2>&1; then
+            echo "Version name is already used!""
+            exit 1
+          fi
+
+  test-dependencies:
+    name: Test dependencies
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Node.JS setup
+        uses: actions/setup-node@v4
+
+      - name: Clean install
+        run: npm ci
+
+  test-build:
+    name: Test build
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Node.JS setup
+        uses: actions/setup-node@v4
+
+      - name: Build
+        run: npm run build
+
+  dry-publish:
+    name: Test dry publish
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Node.JS setup
+        uses: actions/setup-node@v4
+
+      - name: Dry publish
+        working-directory: ./pkg
+        run: npm publish --dry
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
