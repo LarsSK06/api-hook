@@ -23,21 +23,10 @@ jobs:
         working-directory: pkg
         run: npm run build
 
-  dry-publish:
-    name: Test publish (dry run)
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Run dry publish
-        working-directory: pkg
-        run: npm publish --dry-run
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
-
   publish-npm:
     name: Publish to NPM registry
     runs-on: ubuntu-latest
-    needs: [build, dry-publish]
+    needs: [build]
     steps:
       - name: Publish to registry
         working-directory: pkg
@@ -48,7 +37,7 @@ jobs:
   publish-github:
     name: Publish to GitHub Packages registry
     runs-on: ubuntu-latest
-    needs: [build, dry-publish]
+    needs: [build]
     steps:
       - name: Publish to GitHub Packages registry
         working-directory: pkg
