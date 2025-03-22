@@ -16,11 +16,11 @@ jobs:
         uses: actions/setup-node@v4
 
       - name: Test dependencies
-        working-directory: ./pkg
+        working-directory: pkg
         run: npm ci
 
       - name: Test build
-        working-directory: ./pkg
+        working-directory: pkg
         run: npm run build
 
   dry-publish:
@@ -29,7 +29,7 @@ jobs:
     needs: build
     steps:
       - name: Run dry publish
-        working-directory: ./pkg
+        working-directory: pkg
         run: npm publish --dry-run
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
@@ -40,7 +40,7 @@ jobs:
     needs: [build, dry-publish]
     steps:
       - name: Publish to registry
-        working-directory: ./pkg
+        working-directory: pkg
         run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
@@ -51,7 +51,7 @@ jobs:
     needs: [build, dry-publish]
     steps:
       - name: Publish to GitHub Packages registry
-        working-directory: ./pkg
+        working-directory: pkg
         run: npm publish --registry https://npm.pkg.github.com
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
