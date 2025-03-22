@@ -22,9 +22,9 @@ jobs:
         working-directory: ./pkg
         run: npm run build
 
-      - name: Publish to registry
+      - name: Publish to NPM registry
         working-directory: ./pkg
-        run: npm publish --access public
+        run: npm publish --registry https://registry.npmjs.org/ --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
           
