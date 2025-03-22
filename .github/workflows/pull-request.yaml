@@ -5,17 +5,25 @@ on:
     branches: [main]
 
 jobs:
+
+  setup:
+    name: Initial setup
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+    
+      - name: Node.JS setup
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
   
   validate-version-availability:
     name: Validate version availability
     runs-on: ubuntu-latest
+    needs: [setup]
     steps:
-      
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      
-      - name: Node.JS setup
-        uses: actions/setup-node@v4
 
       - name: Install JQ
         run: sudo apt-get install -y jq
@@ -23,24 +31,19 @@ jobs:
       - name: Validate version availability
         working-directory: ./pkg
         run: |
-          PACKAGE_NAME=$(jq -r .name .package.json)
+          PACKAGE_NAME=$(jq -r .name package.json)
           PACKAGE_VERSION=$(jq -r .version package.json)
 
           if npm view "$PACKAGE_NAME@$PACKAGE_VERSION" > /dev/null 2>&1; then
-            echo "Version name is already used!""
+            echo "Version name is already used!"
             exit 1
           fi
 
   test-dependencies:
     name: Test dependencies
     runs-on: ubuntu-latest
+    needs: [setup]
     steps:
-
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      
-      - name: Node.JS setup
-        uses: actions/setup-node@v4
 
       - name: Clean install
         run: npm ci
@@ -48,13 +51,8 @@ jobs:
   test-build:
     name: Test build
     runs-on: ubuntu-latest
+    needs: [setup, test-dependencies]
     steps:
-
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      
-      - name: Node.JS setup
-        uses: actions/setup-node@v4
 
       - name: Build
         run: npm run build
@@ -62,13 +60,8 @@ jobs:
   dry-publish:
     name: Test dry publish
     runs-on: ubuntu-latest
+    needs: [test-build]
     steps:
-
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      
-      - name: Node.JS setup
-        uses: actions/setup-node@v4
 
       - name: Dry publish
         working-directory: ./pkg
