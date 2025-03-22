@@ -5,8 +5,7 @@ on:
     branches: [main]
 
 jobs:
-  build:
-    name: Build
+  main:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -23,22 +22,12 @@ jobs:
         working-directory: ./pkg
         run: npm run build
 
-  publish-npm:
-    name: Publish to NPM registry
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
       - name: Publish to registry
         working-directory: ./pkg
         run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
-
-  publish-github:
-    name: Publish to GitHub Packages registry
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
+          
       - name: Publish to GitHub Packages registry
         working-directory: ./pkg
         run: npm publish --registry https://npm.pkg.github.com
