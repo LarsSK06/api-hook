@@ -1,4 +1,4 @@
-name: Publish package to NPM
+name: Publish package to registries
 
 on:
   push:
@@ -7,6 +7,9 @@ on:
 jobs:
   main:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -14,7 +17,7 @@ jobs:
       - name: Node.JS setup
         uses: actions/setup-node@v4
         with:
-          registry-url: https://registry.npmjs.org
+          registry-url: https://npm.pkg.github.com
 
       - name: Test dependencies
         working-directory: ./pkg
@@ -24,14 +27,14 @@ jobs:
         working-directory: ./pkg
         run: npm run build
 
-      - name: Publish to NPM registry
-        working-directory: ./pkg
-        run: npm publish --registry https://registry.npmjs.org --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
+      #- name: Publish to NPM registry
+      #  working-directory: ./pkg
+      #  run: npm publish --registry https://registry.npmjs.org --access public
+      #  env:
+      #    NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
           
       - name: Publish to GitHub Packages registry
         working-directory: ./pkg
-        run: npm publish --registry https://npm.pkg.github.com
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
