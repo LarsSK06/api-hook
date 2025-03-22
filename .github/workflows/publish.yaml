@@ -1,0 +1,57 @@
+name: Publish package to NPM
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Node.JS setup
+        uses: actions/setup-node@v4
+
+      - name: Test dependencies
+        working-directory: ./pkg
+        run: npm ci
+
+      - name: Test build
+        working-directory: ./pkg
+        run: npm run build
+
+  dry-publish:
+    name: Test publish (dry run)
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Run dry publish
+        working-directory: ./pkg
+        run: npm publish --dry-run
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
+
+  publish-npm:
+    name: Publish to NPM registry
+    runs-on: ubuntu-latest
+    needs: build, dry-publish
+    steps:
+      - name: Publish to registry
+        working-directory: ./pkg
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
+
+  publish-github:
+    name: Publish to GitHub Packages registry
+    runs-on: ubuntu-latest
+    needs: build, dry-publish
+    steps:
+      - name: Publish to GitHub Packages registry
+        working-directory: ./pkg
+        run: npm publish --registry https://npm.pkg.github.com
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
