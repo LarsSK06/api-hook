@@ -1,15 +1,15 @@
 {
     "name": "@larssk/api-hook",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "My personal and preferred API hook for React. Published to NPM to prevent redundancy and version obsolescence across projects.",
     "homepage": "https://github.com/LarsSK06/api-hook#readme",
     "bugs": {
         "url": "https://github.com/LarsSK06/api-hook/issues"
     },
-    "repository": "https://github.com/LarsSK06/api-hook",
-    "publishConfig": {
-        "registry": "https://npm.pkg.github.com"
-    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/LarsSK06/api-hook"
+    },  
     "license": "MIT",
     "author": "Lars Kvihaugen",
     "type": "commonjs",
