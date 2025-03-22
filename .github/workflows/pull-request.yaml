@@ -5,19 +5,20 @@ on:
     branches: [main]
 
 jobs:
-  
-  validate-version-availability:
-    name: Validate version availability
+  main:
+    name: Main
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
-
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
-    
+      
       - name: Node.JS setup
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          registry-url: https://registry.npmjs.org/
 
       - name: Install JQ
         run: sudo apt-get install -y jq
@@ -33,68 +34,15 @@ jobs:
             exit 1
           fi
 
-  test-dependencies:
-    name: Test dependencies
-    runs-on: ubuntu-latest
-    steps:
-
-      - name: Checkout repository
-        uses: actions/checkout@v4
-    
-      - name: Node.JS setup
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Clean install
-        working-directory: pkg
-        run: npm ci
-
-  test-build:
-    name: Test build
-    runs-on: ubuntu-latest
-    needs: [test-dependencies]
-    steps:
-
-      - name: Checkout repository
-        uses: actions/checkout@v4
-    
-      - name: Node.JS setup
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Clean install
+      - name: Install dependencies
         working-directory: pkg
         run: npm ci
 
       - name: Build
         working-directory: pkg
         run: npm run build
-
-  dry-publish:
-    name: Test dry publish
-    runs-on: ubuntu-latest
-    needs: [test-build]
-    steps:
-
-      - name: Checkout repository
-        uses: actions/checkout@v4
-    
-      - name: Node.JS setup
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Clean install
-        working-directory: pkg
-        run: npm ci
-
-      - name: Build
-        working-directory: pkg
-        run: npm run build
-
-      - name: Dry publish
+          
+      - name: Dry-publish
         working-directory: pkg
         run: npm publish --dry
         env:
