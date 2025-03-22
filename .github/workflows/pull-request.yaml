@@ -29,7 +29,7 @@ jobs:
         run: sudo apt-get install -y jq
 
       - name: Validate version availability
-        working-directory: ./pkg
+        working-directory: pkg
         run: |
           PACKAGE_NAME=$(jq -r .name package.json)
           PACKAGE_VERSION=$(jq -r .version package.json)
@@ -64,7 +64,7 @@ jobs:
     steps:
 
       - name: Dry publish
-        working-directory: ./pkg
+        working-directory: pkg
         run: npm publish --dry
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
