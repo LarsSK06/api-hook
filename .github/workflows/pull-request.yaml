@@ -64,6 +64,10 @@ jobs:
         with:
           node-version: 20
 
+      - name: Clean install
+        working-directory: pkg
+        run: npm ci
+
       - name: Build
         working-directory: pkg
         run: npm run build
@@ -81,6 +85,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+
+      - name: Clean install
+        working-directory: pkg
+        run: npm ci
+
+      - name: Build
+        working-directory: pkg
+        run: npm run build
 
       - name: Dry publish
         working-directory: pkg
