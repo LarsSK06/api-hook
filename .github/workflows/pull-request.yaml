@@ -5,9 +5,9 @@ on:
     branches: [main]
 
 jobs:
-
-  setup:
-    name: Initial setup
+  
+  validate-version-availability:
+    name: Validate version availability
     runs-on: ubuntu-latest
     steps:
 
@@ -18,12 +18,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-  
-  validate-version-availability:
-    name: Validate version availability
-    runs-on: ubuntu-latest
-    needs: [setup]
-    steps:
 
       - name: Install JQ
         run: sudo apt-get install -y jq
@@ -42,8 +36,15 @@ jobs:
   test-dependencies:
     name: Test dependencies
     runs-on: ubuntu-latest
-    needs: [setup]
     steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+    
+      - name: Node.JS setup
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
       - name: Clean install
         run: npm ci
@@ -51,8 +52,16 @@ jobs:
   test-build:
     name: Test build
     runs-on: ubuntu-latest
-    needs: [setup, test-dependencies]
+    needs: [test-dependencies]
     steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+    
+      - name: Node.JS setup
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
       - name: Build
         run: npm run build
@@ -62,6 +71,14 @@ jobs:
     runs-on: ubuntu-latest
     needs: [test-build]
     steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+    
+      - name: Node.JS setup
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
       - name: Dry publish
         working-directory: pkg
