@@ -16,8 +16,6 @@ jobs:
       
       - name: Node.JS setup
         uses: actions/setup-node@v4
-        with:
-          registry-url: https://npm.pkg.github.com
 
       - name: Test dependencies
         working-directory: ./pkg
@@ -26,15 +24,9 @@ jobs:
       - name: Test build
         working-directory: ./pkg
         run: npm run build
-
-      #- name: Publish to NPM registry
-      #  working-directory: ./pkg
-      #  run: npm publish --registry https://registry.npmjs.org --access public
-      #  env:
-      #    NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
           
       - name: Publish to GitHub Packages registry
         working-directory: ./pkg
-        run: npm publish --access public
+        run: npm publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
