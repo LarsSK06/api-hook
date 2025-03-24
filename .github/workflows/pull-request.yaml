@@ -41,6 +41,9 @@ jobs:
       - name: Build
         working-directory: pkg
         run: npm run build
+
+      - name: Copy README
+        run: cp README.md pkg
           
       - name: Dry-publish
         working-directory: pkg
