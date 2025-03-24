@@ -2,7 +2,7 @@
 
 ### Status
 
-[![Publish package to NPM](https://github.com/LarsSK06/api-hook/actions/workflows/npm-publish.yaml/badge.svg)](https://github.com/LarsSK06/api-hook/actions/workflows/npm-publish.yaml)
+[![Publish package to NPM](https://github.com/LarsSK06/api-hook/actions/workflows/publish.yaml/badge.svg)](https://github.com/LarsSK06/api-hook/actions/workflows/npm-publish.yaml)
 
 ### What is this?
 
