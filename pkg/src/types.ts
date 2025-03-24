@@ -1,12 +1,28 @@
-import { AxiosHeaders } from "axios";
+export type ResponseRoot =
+    Blob |
+    string |
+    boolean |
+    number |
+    [] |
+    {} |
+    undefined;
 
-export type GlobalOptions = {
-    baseURL?: string;
-    getError?: (error: any) => string;
-    processor?: (value: any) => any;
-};
+export type RequestRoot =
+    FormData |
+    {} |
+    [] |
+    string |
+    number |
+    undefined;
 
-export enum HTTPMethod {
+type Stringish =
+    string |
+    symbol |
+    number |
+    undefined |
+    null;
+
+export enum HttpMethod {
     GET = "GET",
     POST = "POST",
     PUT = "PUT",
@@ -14,37 +30,26 @@ export enum HTTPMethod {
     PATCH = "PATCH"
 }
 
-export type EndpointString =
-    undefined |
-    string |
-    number |
-    symbol |
-    null;
-
-export type Options<Response, Request> = {
-    endpoint?: EndpointString | EndpointString[];
-    searchParams?: { [key: string]: EndpointString };
-    method?: HTTPMethod;
-    headers?: AxiosHeaders;
+export type HookOptions<Response extends ResponseRoot, Request extends RequestRoot> = {
+    endpoint?: Stringish | Stringish[];
+    method?: HttpMethod;
     body?: Request;
-    onSuccess?: (value: Response) => void;
-    onError?: (error: string) => void;
+    onSuccess?: (value: Response | null) => any;
+    onError?: (value: string) => any;
 };
 
-export type ResponseRoot =
-    undefined |
-    string |
-    number |
-    Blob |
-    null |
-    {} |
-    [];
+export type HookReturn<Params, Response extends ResponseRoot> = {
+    loading: boolean;
+    data: Response | null;
+    call: (params?: Params) => Promise<Response | null>;
+};
 
-export type RequestRoot =
-    undefined |
-    FormData |
-    string |
-    number |
-    null |
-    {} |
-    [];
+export type HookOptionsFactory<Params, Response extends ResponseRoot, Request extends RequestRoot> =
+    ((params?: Params) => (HookOptions<Response, Request> | Promise<HookOptions<Response, Request>>)) |
+    HookOptions<Response, Request>;
+
+export type GlobalOptions = {
+    baseUrl: string;
+    handleResponse?: <T extends ResponseRoot>(value: T) => any;
+    handleError?: (error: any) => string;
+};
