@@ -1,82 +1,55 @@
 import { useState } from "react";
-import { GlobalOptions, HookOptionsFactory, HookReturn, HttpMethod, RequestRoot, ResponseRoot } from "./types";
+import { Config, ConfigScheme, HookOptionsFactory } from "./types";
+
+import useApiHookConfig from "./context";
 import axios from "axios";
 
-class ApiHook {
+const useApi = <
+    Params extends any,
+    ResponseBody extends any,
+    RequestBody extends any
+>(optionsFactory: HookOptionsFactory<Params, RequestBody>) => {
+    const [loading, setLoading] = useState<boolean>(false);
+    const [data, setData] = useState<ResponseBody | null>(null);
 
-    _options: GlobalOptions | null = null;
+    const config = useApiHookConfig();
 
-    useApi<
-        Params = undefined,
-        Response extends ResponseRoot = undefined,
-        Request extends RequestRoot = undefined
-    >(optionsFactory: HookOptionsFactory<Params, Response, Request>) {
-        if (!this._options) throw new Error("Unconfigurated!");
+    const call = (params?: Params) => new Promise((
+        resolve: (value: ResponseBody) => void,
+        reject: () => void
+    ) => {
+        setLoading(true);
 
-        const [loading, setLoading] = useState<boolean>(false);
-        const [data, setData] = useState<Response | null>(null);
+        const {
+            scheme: targetScheme,
+            endpoint,
+            method = "GET",
+            body
+        } =
+            typeof optionsFactory === "function"
+                ? optionsFactory(params)
+                : optionsFactory;
 
-        const call = async (params?: Params) => {
-            return new Promise<Response | null>(async (resolve, reject) => {
-                setLoading(true);
+        const targetSchemeName = targetScheme ?? config.defaultConfigScheme;
 
-                const {
-                    endpoint = "/",
-                    method = HttpMethod.GET,
-                    body,
-                    onSuccess,
-                    onError
-                } = typeof optionsFactory === "function" ? await optionsFactory(params) : optionsFactory;
-    
-                const address =
-                    endpoint instanceof Array
-                        ? [this._options!.baseUrl, ...endpoint].join("/")
-                        : [this._options!.baseUrl, endpoint].join("/");
+        const scheme = config.configSchemes.find((cs: ConfigScheme) => cs.schemeName === targetSchemeName);
 
-                try {
-                    const response = await axios({
-                        url: address,
-                        method,
-                        data: body
-                    });
+        if (!scheme) throw new Error(`Configuration scheme "${targetSchemeName}" does not exist!`);
 
-                    const responseData =
-                        this._options!.handleResponse?.(response.data) ??
-                        response.data ??
-                        null;
+        const address =
+            endpoint instanceof Array
+                ? [scheme.baseURL, ...endpoint].join("/")
+                : [scheme.baseURL, endpoint].join("/");
 
-                    setData(responseData);
-                    onSuccess?.(responseData);
-                    resolve(responseData);
-                }
-                catch (error: any) {
-                    const responseError =
-                        this._options!.handleError?.(error) ??
-                        error.message ??
-                        "Unknown error";
+        const response = await axios({
+            url: address,
+            method,
+            data: body
+        });
+    });
 
-                    onError?.(responseError);
-                    reject(responseError);
-                }
-                finally {
-                    setLoading(false);
-                }
-            });
-        };
 
-        return { loading, data, call } satisfies HookReturn<Params, Response> as HookReturn<Params, Response>;
-    }
+    const scheme = config.configSchemes.find((cs: ConfigScheme) => cs.schemeName === ())
+};
 
-    config(options: GlobalOptions) {
-        this._options = options;
-    }
-
-    static createInstance() {
-        return new ApiHook();
-    }
-
-}
-
-const instance = new ApiHook();
-
-export default instance;
+export default useApi;
