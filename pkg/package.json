@@ -1,6 +1,6 @@
 {
     "name": "@larssk/api-hook",
-    "version": "1.0.6",
+    "version": "1.2.0",
     "description": "My personal and preferred API hook for React. Published to NPM to prevent redundancy and version obsolescence across projects.",
     "homepage": "https://github.com/LarsSK06/api-hook#readme",
     "bugs": "https://github.com/LarsSK06/api-hook/issues",
@@ -22,7 +22,7 @@
         "react": "^19.0.0"
     },
     "devDependencies": {
-        "@types/react": "^19.0.10",
+        "@types/react": "^19",
         "tsup": "^8.4.0",
         "typescript": "^5.8.2"
     }

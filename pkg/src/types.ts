@@ -1,50 +1,37 @@
-import { AxiosHeaders } from "axios";
+import { AxiosRequestConfig } from "axios";
+import { ReactNode } from "react";
 
-export type GlobalOptions = {
-    baseURL?: string;
-    getError?: (error: any) => string;
-    processor?: (value: any) => any;
+export type Endpoint =
+    string |
+    number |
+    symbol;
+
+export type ConfigScheme = {
+    schemeName: string;
+    baseURL: string;
+    headers?: AxiosRequestConfig["headers"];
 };
 
-export enum HTTPMethod {
-    GET = "GET",
-    POST = "POST",
-    PUT = "PUT",
-    DELETE = "DELETE",
-    PATCH = "PATCH"
-}
-
-export type EndpointString =
-    undefined |
-    string |
-    number |
-    symbol |
-    null;
-
-export type Options<Response, Request> = {
-    endpoint?: EndpointString | EndpointString[];
-    searchParams?: { [key: string]: EndpointString };
-    method?: HTTPMethod;
-    headers?: AxiosHeaders;
-    body?: Request;
-    onSuccess?: (value: Response) => void;
-    onError?: (error: string) => void;
+export type Config = {
+    defaultConfigScheme: string;
+    configSchemes: [ConfigScheme, ...ConfigScheme[]];
 };
 
-export type ResponseRoot =
-    undefined |
-    string |
-    number |
-    Blob |
-    null |
-    {} |
-    [];
+export type HookOptions<RequestBody> = {
+    scheme?: string;
+    endpoint: Endpoint | (Endpoint | undefined | null)[];
+    method?: Method;
+    body?: RequestBody;
+};
 
-export type RequestRoot =
-    undefined |
-    FormData |
-    string |
-    number |
-    null |
-    {} |
-    [];
+export type HookOptionsFactory<Params, RequestBody> =
+    ((params?: Params) => HookOptions<RequestBody>) |
+    HookOptions<RequestBody>;
+
+export type Method =
+    "GET" |
+    "PUT" |
+    "POST" |
+    "DELETE";
+
+export type ParentProps = { children?: ReactNode; };
