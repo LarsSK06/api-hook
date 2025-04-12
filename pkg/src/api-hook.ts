@@ -1,27 +1,29 @@
-import { useState } from "react";
-import { Config, ConfigScheme, HookOptionsFactory } from "./types";
+"use client";
 
-import useApiHookConfig from "./context";
+import { useState } from "react";
+import { ConfigScheme, HookOptionsFactory } from "./types";
+import { useApiHookConfig } from "./context";
+
 import axios from "axios";
 
-const useApi = <
-    Params extends any,
-    ResponseBody extends any,
-    RequestBody extends any
+export const useApi = <
+    Params = undefined,
+    ResponseBody = undefined,
+    RequestBody = undefined
 >(optionsFactory: HookOptionsFactory<Params, RequestBody>) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [data, setData] = useState<ResponseBody | null>(null);
 
     const config = useApiHookConfig();
 
-    const call = (params?: Params) => new Promise((
+    const call = (params?: Params) => new Promise(async (
         resolve: (value: ResponseBody) => void,
-        reject: () => void
+        reject: (error: string) => void
     ) => {
         setLoading(true);
 
         const {
-            scheme: targetScheme,
+            scheme: targetScheme = config.defaultConfigScheme,
             endpoint,
             method = "GET",
             body
@@ -30,26 +32,34 @@ const useApi = <
                 ? optionsFactory(params)
                 : optionsFactory;
 
-        const targetSchemeName = targetScheme ?? config.defaultConfigScheme;
+        const scheme = config.configSchemes.find((cs: ConfigScheme) => cs.schemeName === targetScheme);
 
-        const scheme = config.configSchemes.find((cs: ConfigScheme) => cs.schemeName === targetSchemeName);
-
-        if (!scheme) throw new Error(`Configuration scheme "${targetSchemeName}" does not exist!`);
+        if (!scheme) throw new Error(`Configuration scheme "${targetScheme}" does not exist!`);
 
         const address =
             endpoint instanceof Array
                 ? [scheme.baseURL, ...endpoint].join("/")
                 : [scheme.baseURL, endpoint].join("/");
 
-        const response = await axios({
-            url: address,
-            method,
-            data: body
-        });
+        try {
+            const response = await axios({
+                url: address.replace(/\/$/, ""),
+                method,
+                headers: scheme.headers,
+                data: body
+            });
+
+            setData(response.data);
+            resolve(response as ResponseBody);
+        }
+        catch (error: any) {
+            console.log(error);
+            reject(`${error}`);
+        }
+        finally {
+            setLoading(false);
+        }
     });
 
-
-    const scheme = config.configSchemes.find((cs: ConfigScheme) => cs.schemeName === ())
+    return { loading, data, call };
 };
-
-export default useApi;

@@ -1,3 +1,6 @@
+import { AxiosRequestConfig } from "axios";
+import { ReactNode } from "react";
+
 export type Endpoint =
     string |
     number |
@@ -6,7 +9,7 @@ export type Endpoint =
 export type ConfigScheme = {
     schemeName: string;
     baseURL: string;
-    headers: HeadersInit;
+    headers?: AxiosRequestConfig["headers"];
 };
 
 export type Config = {
@@ -30,3 +33,5 @@ export type Method =
     "PUT" |
     "POST" |
     "DELETE";
+
+export type ParentProps = { children?: ReactNode; };
