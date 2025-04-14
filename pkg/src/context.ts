@@ -1,13 +1,15 @@
 "use client";
 
-import { createContext, createElement, useContext } from "react";
-import { Config, ParentProps } from "./types";
+import { createContext, createElement, ReactNode, useContext } from "react";
+import { Config } from "./types";
 
 const Context = createContext<Config | undefined>(undefined);
 
-export const Provider = ({ config, children }: { config: Config; } & ParentProps) =>
+/** The provider of the hook configuration context. */
+export const Provider = ({ config, children }: { config: Config; children?: ReactNode; }) =>
     createElement(Context.Provider, { value: config }, children);
 
+/** A function fetching the configuration given through the context. */
 export const useApiHookConfig = () => {
     const context = useContext(Context);
 

@@ -6,16 +6,22 @@ import { useApiHookConfig } from "./context";
 
 import axios from "axios";
 
+/** The actual API hook.
+ * @param optionsFactory Either an object matching the hook options, or a factory function returning the hook options.
+ */
 export const useApi = <
     Params = undefined,
     ResponseBody = undefined,
     RequestBody = undefined
->(optionsFactory: HookOptionsFactory<Params, RequestBody>) => {
+>(optionsFactory: HookOptionsFactory<Params, ResponseBody, RequestBody>) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [data, setData] = useState<ResponseBody | null>(null);
 
     const config = useApiHookConfig();
 
+    /** The function for sending the request to the designated destination.
+     * @param params The optional parameters which can be used in the hook options to form fluid options.
+    */
     const call = (params?: Params) => new Promise(async (
         resolve: (value: ResponseBody) => void,
         reject: (error: string) => void
@@ -26,7 +32,9 @@ export const useApi = <
             scheme: targetScheme = config.defaultConfigScheme,
             endpoint,
             method = "GET",
-            body
+            body,
+            onResolve,
+            onReject
         } =
             typeof optionsFactory === "function"
                 ? optionsFactory(params)
@@ -46,15 +54,24 @@ export const useApi = <
                 url: address.replace(/\/$/, ""),
                 method,
                 headers: scheme.headers,
-                data: body
+                data: scheme.processRequestBody?.(body) ?? body
             });
 
-            setData(response.data);
-            resolve(response as ResponseBody);
+            const processedResponseBody =
+                scheme.processResponseBody?.(response.data) ??
+                response.data;
+
+            setData(processedResponseBody);
+            onResolve?.(processedResponseBody);
+            resolve(processedResponseBody as ResponseBody);
         }
         catch (error: any) {
-            console.log(error);
-            reject(`${error}`);
+            const processedError =
+                scheme.getErrorFromResponseBody?.(error) ??
+                "api-hook: Request responded with error!";
+
+            onReject?.(processedError);
+            reject(processedError);
         }
         finally {
             setLoading(false);
