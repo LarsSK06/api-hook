@@ -78,5 +78,11 @@ export const useApi = <
         }
     });
 
-    return { loading, data, call };
+    return {
+        loading,
+        setLoading,
+        data,
+        setData,
+        call
+    };
 };
