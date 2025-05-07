@@ -10,6 +10,7 @@ export type Endpoint =
  * @param schemeName The name of the scheme.
  * @param baseURL The root of the whole address when the request is sent. (e.x. https://example.com)
  * @param headers The headers which all the requests sent under this scheme will contain.
+ * @param searchParams The search parameters which all the requests under this scheme's full addresses will contain.
  * @param processResponseBody A function which will process the response body before it is returned in the hook.
  * @param processRequestBody A function which will process the request body before it is sent to the target address.
  * @param getErrorFromResponseBody A function to dig out the designated error from the response body, when the request is unsuccessful.
@@ -36,7 +37,9 @@ export type Config = {
 /** The options for the hook, and how it should behave.
  * @param scheme The name of the configuration scheme the hook instance should use.
  * @param endpoint The endpoint of which the request shall be sent to.
+ * @param searchParams The search parameters to be appended on the full address in addition to the ones defined in the target scheme (if any).
  * @param method The method of the request.
+ * @param headers The headers of the request in addition to the ones defined in the target scheme (if any).
  * @param body The body of the request.
  * @param onResolve A function which executes when the request is successful.
  * @param onReject A function which executed when the request is unsuccessful.
