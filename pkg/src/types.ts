@@ -46,6 +46,7 @@ export type HookOptions<ResponseBody, RequestBody> = {
     endpoint: Endpoint | (Endpoint | undefined | null)[];
     searchParams?: AxiosRequestConfig["params"];
     method?: Method;
+    headers?: AxiosRequestConfig["headers"];
     body?: RequestBody;
     onResolve?: (body: ResponseBody) => any;
     onReject?: (error: string) => any;

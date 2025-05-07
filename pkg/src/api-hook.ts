@@ -33,6 +33,7 @@ export const useApi = <
             endpoint,
             searchParams,
             method = "GET",
+            headers,
             body,
             onResolve,
             onReject
@@ -55,7 +56,7 @@ export const useApi = <
                 url: address.replace(/\/$/, ""),
                 method,
                 params: { ...scheme.searchParams, ...searchParams },
-                headers: scheme.headers,
+                headers: { ...scheme.headers, ...headers },
                 data: scheme.processRequestBody?.(body) ?? body
             });
 
