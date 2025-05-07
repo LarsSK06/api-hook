@@ -1,6 +1,6 @@
 {
     "name": "@larssk/api-hook",
-    "version": "2.3.0",
+    "version": "2.4.0",
     "description": "My personal and preferred API hook for React. Published to NPM to prevent redundancy and version obsolescence across projects.",
     "homepage": "https://github.com/LarsSK06/api-hook#readme",
     "bugs": "https://github.com/LarsSK06/api-hook/issues",

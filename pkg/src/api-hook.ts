@@ -31,7 +31,9 @@ export const useApi = <
         const {
             scheme: targetScheme = config.defaultConfigScheme,
             endpoint,
+            searchParams,
             method = "GET",
+            headers,
             body,
             onResolve,
             onReject
@@ -49,11 +51,14 @@ export const useApi = <
                 ? [scheme.baseURL, ...endpoint].join("/")
                 : [scheme.baseURL, endpoint].join("/");
 
+        if (address.includes("?")) console.warn("Search parameters should not be in endpoint, but rather in `searchParams` field in `HookOptions`!");
+
         try {
             const response = await axios({
                 url: address.replace(/\/$/, ""),
                 method,
-                headers: scheme.headers,
+                params: { ...scheme.searchParams, ...searchParams },
+                headers: { ...scheme.headers, ...headers },
                 data: scheme.processRequestBody?.(body) ?? body
             });
 
@@ -78,5 +83,11 @@ export const useApi = <
         }
     });
 
-    return { loading, data, call };
+    return {
+        loading,
+        setLoading,
+        data,
+        setData,
+        call
+    };
 };
