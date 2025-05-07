@@ -31,6 +31,7 @@ export const useApi = <
         const {
             scheme: targetScheme = config.defaultConfigScheme,
             endpoint,
+            searchParams,
             method = "GET",
             body,
             onResolve,
@@ -53,6 +54,7 @@ export const useApi = <
             const response = await axios({
                 url: address.replace(/\/$/, ""),
                 method,
+                params: { ...scheme.searchParams, ...searchParams },
                 headers: scheme.headers,
                 data: scheme.processRequestBody?.(body) ?? body
             });

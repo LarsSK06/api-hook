@@ -18,6 +18,7 @@ export type ConfigScheme = {
     schemeName: string;
     baseURL: string;
     headers?: AxiosRequestConfig["headers"];
+    searchParams?: AxiosRequestConfig["params"];
     processResponseBody?: (body: any) => any;
     processRequestBody?: (body: any) => any;
     getErrorFromResponseBody?: (body: any) => string;
@@ -43,6 +44,7 @@ export type Config = {
 export type HookOptions<ResponseBody, RequestBody> = {
     scheme?: string;
     endpoint: Endpoint | (Endpoint | undefined | null)[];
+    searchParams?: AxiosRequestConfig["params"];
     method?: Method;
     body?: RequestBody;
     onResolve?: (body: ResponseBody) => any;
