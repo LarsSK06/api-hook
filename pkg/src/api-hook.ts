@@ -51,6 +51,8 @@ export const useApi = <
                 ? [scheme.baseURL, ...endpoint].join("/")
                 : [scheme.baseURL, endpoint].join("/");
 
+        if (address.includes("?")) console.warn("Search parameters should not be in endpoint, but rather in `searchParams` field in `HookOptions`!");
+
         try {
             const response = await axios({
                 url: address.replace(/\/$/, ""),
